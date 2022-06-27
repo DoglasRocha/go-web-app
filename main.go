@@ -2,13 +2,14 @@ package main
 
 import (
 	"database/sql"
-	_ "github.com/lib/pq"
 	"html/template"
 	"net/http"
+
+	_ "github.com/lib/pq"
 )
 
 func conectaComBancoDeDados() *sql.DB {
-	conexao := "user=postgres dbname=doglas_loja password=12345678 host=localhost sslmode=disabled"
+	conexao := "user=postgres dbname=doglas_loja password=12345678 host=localhost sslmode=disable"
 	db, err := sql.Open("postgres", conexao)
 	if err != nil {
 		panic(err.Error())
@@ -18,6 +19,7 @@ func conectaComBancoDeDados() *sql.DB {
 }
 
 type Produto struct {
+	Id              int
 	Nome, Descricao string
 	Preco           float64
 	Quantidade      int
@@ -26,18 +28,31 @@ type Produto struct {
 var templates = template.Must(template.ParseGlob("templates/*.html"))
 
 func main() {
-	db := conectaComBancoDeDados()
-	defer db.Close()
 	http.HandleFunc("/", index)
 	http.ListenAndServe(":8000", nil)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	produtos := []Produto{
-		{"Camiseta", "Azul, bem bonita", 39, 5},
-		{"Tênis", "Confortável", 89, 3},
-		{"Fone", "Muito bom", 59, 2},
+	db := conectaComBancoDeDados()
+	selectDeTodosOsProdutos, err := db.Query("SELECT * FROM produtos")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	p := Produto{}
+	produtos := []Produto{}
+
+	for selectDeTodosOsProdutos.Next() {
+		err = selectDeTodosOsProdutos.Scan(&p.Id, &p.Nome, &p.Descricao, &p.Preco, &p.Quantidade)
+
+		if err != nil {
+			panic(err.Error())
+		}
+
+		produtos = append(produtos, p)
 	}
 
 	templates.ExecuteTemplate(w, "Index", produtos)
+	defer db.Close()
 }
