@@ -35,7 +35,7 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 			log.Println("Erro na conversão da quantidade:", err)
 		}
 
-		produtos.CriarNovoProduto(nome, descricao, preco, quantidade)
+		produtos.CriaNovoProduto(nome, descricao, preco, quantidade)
 	}
 
 	http.Redirect(w, r, "/", 301)
