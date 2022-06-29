@@ -11,6 +11,7 @@
         crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+    <script defer src="templates/delete.js"></script>
     <title>Loja do Doglão</title>
 </head>
 <nav class="navbar navbar-light bg-light mb-4">
@@ -37,7 +38,7 @@
                             <td>{{.Descricao}}</td>
                             <td>{{.Preco}}</td>
                             <td>{{.Quantidade}}</td>
-                            <td><a href="/delete?id={{.Id}}" class="btn btn-danger">Deletar</a></td>
+                            <td><button onclick="onDelete('{{.Id}}')" class="btn btn-danger">Deletar</button></td>
                         </tr>
                         {{end}}
                     </tbody>
@@ -49,6 +50,18 @@
         </div>
     </div>
 </body>
+
+<script>
+    function onDelete(id) 
+    {
+        let resposta = confirm("Tem certeza que deseja deletar esse produto?")
+        
+        if (resposta)
+        {
+            window.location = "/delete?id=" + id
+        }
+    }
+</script>
 
 </html>
 
