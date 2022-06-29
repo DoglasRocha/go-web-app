@@ -1,4 +1,4 @@
-package produtos
+package models
 
 import "loja/db"
 
@@ -44,5 +44,17 @@ func CriaNovoProduto(nome, descricao string, preco float64, quantidade int) {
 	}
 
 	insereDadosNoBanco.Exec(nome, descricao, preco, quantidade)
+	defer db.Close()
+}
+
+func DeletaProduto(idDoProduto string) {
+	db := db.ConectaComBancoDeDados()
+
+	deletarOProduto, err := db.Prepare("DELETE FROM produtos WHERE id=$1")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	deletarOProduto.Exec(idDoProduto)
 	defer db.Close()
 }

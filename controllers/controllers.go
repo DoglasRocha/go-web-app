@@ -3,7 +3,7 @@ package controllers
 import (
 	"html/template"
 	"log"
-	produtos "loja/models"
+	"loja/models"
 	"net/http"
 	"strconv"
 )
@@ -12,7 +12,7 @@ var templates = template.Must(template.ParseGlob("templates/*.html"))
 
 func Index(w http.ResponseWriter, r *http.Request) {
 
-	todosOsProdutos := produtos.BuscaTodosOsProdutos()
+	todosOsProdutos := models.BuscaTodosOsProdutos()
 
 	templates.ExecuteTemplate(w, "Index", todosOsProdutos)
 }
@@ -35,8 +35,16 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 			log.Println("Erro na conversão da quantidade:", err)
 		}
 
-		produtos.CriaNovoProduto(nome, descricao, preco, quantidade)
+		models.CriaNovoProduto(nome, descricao, preco, quantidade)
 	}
+
+	http.Redirect(w, r, "/", 301)
+}
+
+func Delete(w http.ResponseWriter, r *http.Request) {
+	idDoProduto := r.URL.Query().Get("id")
+
+	models.DeletaProduto(idDoProduto)
 
 	http.Redirect(w, r, "/", 301)
 }
